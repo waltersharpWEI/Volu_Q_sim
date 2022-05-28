@@ -3,8 +3,9 @@ import time
 import pandas as pd
 import numpy as np
 import logging
-import config
 
+import config
+from simulator.damage_model import compute_psnr,check_skip
 
 
 def pull_frame(fi):
@@ -22,9 +23,9 @@ def udp_sim():
     while fi < T:
         recv_handle = pull_frame(fi)
         psnr = compute_psnr(fi, recv_handle)
-        skips = check_skip(fi, recv_handle)
+        skip = check_skip(fi, recv_handle)
         psnrs.append(psnr)
-        skips.append(skips)
+        skips.append(skip)
         fi += 1
     print("All Done.")
     stalls = np.zeros(T)
