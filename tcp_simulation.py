@@ -44,7 +44,7 @@ def tcp_sim():
                        "stall":stalls,
                        "psnr":psnrs,
                        "skip":skips})
-    df.to_csv("tcp_stall.csv",index=False)
+    df.to_csv("tcp_qos.csv",index=False)
     return
 
 
