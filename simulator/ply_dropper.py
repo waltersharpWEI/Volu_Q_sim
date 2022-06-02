@@ -5,12 +5,12 @@ import logging
 import math
 import os
 import numpy as np
+from utils.manifest_tools import manifest_to_list
 
 def drop_ply(raw_path, output_path, packet_presence_list):
     NUM_PACKETS = len(packet_presence_list)
     HEADER_OFFSET = 14
     output_points = 0
-    raw_points = 0
     with open(raw_path, 'r') as f1:
         lines = f1.readlines()
         line = lines[6]
@@ -48,17 +48,25 @@ def drop_ply(raw_path, output_path, packet_presence_list):
                 i += 1
     return output_points
 
+
+
+
+
 if __name__=="__main__":
     logging.basicConfig(level=logging.DEBUG)
-    filename = "loot_vox10_1000.ply"
     packet_present = [0,0,0,0,0,0,0,1]
     data_root = "../data"
     input_prefix = "before"
     output_prefix = "after"
-    input_root = os.path.join(data_root, input_prefix)
-    input_path = os.path.join(input_root, filename)
-    output_root = os.path.join(data_root, output_prefix)
-    output_path = os.path.join(output_root, filename)
-    n_points = drop_ply(input_path, packet_present, output_path)
-    if n_points > 0:
-        logging.debug("The output file has " + str(n_points) + " points")
+    manifest_path = "../manifest.json"
+    chunk_list = manifest_to_list(manifest_path)
+    for chunk in chunk_list:
+        filename = chunk['filename']
+        print(filename)
+        input_root = os.path.join(data_root, input_prefix)
+        input_path = os.path.join(input_root, filename)
+        output_root = os.path.join(data_root, output_prefix)
+        output_path = os.path.join(output_root, filename)
+        n_points = drop_ply(input_path, output_path, packet_present)
+        if n_points > 0:
+            logging.debug("The output file has " + str(n_points) + " points")

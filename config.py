@@ -1,3 +1,3 @@
 FR=30
-T=100
+T=2
 skip_thresh=0.7

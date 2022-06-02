@@ -5,7 +5,7 @@ import numpy as np
 import logging
 
 import config
-from simulator.damage_model import compute_psnr,check_skip,network_damage
+from simulator.damage_model import compute_psnr, check_skip, network_damage
 
 
 def pull_frame(fi):
@@ -14,8 +14,9 @@ def pull_frame(fi):
     recv_bitmap = np.ones((16,10))
     # TODO:replace 0.1 with actual loss in network trace
     recv_bitmap = network_damage(recv_bitmap, 0.1)
-    logging.debug(recv_bitmap)
+    #logging.debug(recv_bitmap)
     return recv_bitmap
+
 
 def udp_sim():
     T = config.T
