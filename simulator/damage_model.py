@@ -4,6 +4,7 @@ import os
 from simulator.ply_dropper import drop_ply
 from utils.manifest_tools import manifest_to_list
 import subprocess
+import logging
 
 def parse_pc_err(out):
     raw = out.split()[-14]
@@ -26,7 +27,7 @@ def external_pcc_error(input_path,output_path):
     psnr = parse_pc_err(out)
     return psnr
 
-def compute_psnr(fi, recv_handle):
+def damage_file(fi, recv_handle):
     data_root = "data"
     input_prefix = "before"
     output_prefix = "after"
@@ -39,10 +40,33 @@ def compute_psnr(fi, recv_handle):
     output_path = os.path.join(output_root, filename)
     #TODO: The recv_handle should handle 16 blocks. Yet we will assume there is only one block at the moment
     n_points = drop_ply(input_path, output_path, recv_handle[0])
-    psnr = 1
-    if n_points > 0:
+    #psnr = 1
+    #if n_points > 0:
+        #psnr = external_pcc_error(input_path,output_path)
+    #    psnr = 1
+    return n_points
+
+
+def offline_psnr(df):
+    #TODO:compute psnr and update the df
+    data_root = "data"
+    input_prefix = "before"
+    output_prefix = "after"
+    manifest_path = "manifest.json"
+    chunk_list = manifest_to_list(manifest_path)
+    fi = 0
+    for chunk in chunk_list:
+        filename = chunk["filename"]
+        input_root = os.path.join(data_root, input_prefix)
+        input_path = os.path.join(input_root, filename)
+        output_root = os.path.join(data_root, output_prefix)
+        output_path = os.path.join(output_root, filename)
         psnr = external_pcc_error(input_path,output_path)
-    return psnr
+        #TODO:WARNING === this psnr logic may not work
+        df["psnr"][fi]= psnr
+        fi += 1
+    return df
+
 
 
 def check_arrive(recv_handle):

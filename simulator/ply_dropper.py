@@ -46,6 +46,7 @@ def drop_ply(raw_path, output_path, packet_presence_list):
                         f2.write(line)
                         output_points += 1
                 i += 1
+    logging.debug(" And " + str(output_points) + " points in the output ply.")
     return output_points
 
 

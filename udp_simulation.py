@@ -5,7 +5,7 @@ import numpy as np
 import logging
 
 import config
-from simulator.damage_model import compute_psnr, check_skip, network_damage
+from simulator.damage_model import offline_psnr, check_skip, network_damage, damage_file
 
 
 def pull_frame(fi):
@@ -25,18 +25,25 @@ def udp_sim():
     skips = []
     frame_nos = range(T)
     while fi < T:
+        logging.debug("Start pulling frame " + str(fi) + ".")
         recv_handle = pull_frame(fi)
-        psnr = compute_psnr(fi, recv_handle)
+        n_points = damage_file(fi, recv_handle)
         skip = check_skip(fi, recv_handle)
-        psnrs.append(psnr)
+        #The psnr will be updated in the offline_psnr
+        #In the two-pass fashion
+        psnrs.append(1)
         skips.append(skip)
         fi += 1
+
     print("All Done.")
     stalls = np.zeros(T)
     df = pd.DataFrame({"frame_no":frame_nos,
                        "stall":stalls,
                        "psnr":psnrs,
                        "skip":skips})
+    print("Computing PSNR")
+    df = offline_psnr(df)
+    print("PSNR is computed")
     df.to_csv("udp_qos.csv",index=False)
     return
 

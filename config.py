@@ -1,3 +1,3 @@
 FR=30
-T=2
-skip_thresh=0.7
+T=100
+skip_thresh=0.5
